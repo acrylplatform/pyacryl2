@@ -2,7 +2,14 @@
 
 [Acryl](https://acrylplatform.com/ "Acryl Platform") Node API client 
 
+
 ## Installation
+
+Requirements:
+- Python 3.6 and higher
+- Packages from `requirements.txt`
+
+
 
 From PyPI:
 
