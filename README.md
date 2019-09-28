@@ -1,6 +1,6 @@
-# PyAcryl2
+# PyAcryl2 [![Build Status](https://travis-ci.com/DPInvaders/pyacryl2.svg?token=s1sqYjTtbQq5zQbpVpA2&branch=master)](https://travis-ci.com/DPInvaders/pyacryl2)
 
-[Acryl](https://acrylplatform.com/ "Acryl Platform") Node API client
+[Acryl](https://acrylplatform.com/ "Acryl Platform") Node API client 
 
 ## Installation
 
