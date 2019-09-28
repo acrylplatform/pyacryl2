@@ -1,8 +1,8 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 url = "https://github.com/DPInvaders/pyacryl2"
 
-packages = ['pyacryl2']
+packages = find_packages(exclude=["tests", "tests.*"])
 
 install_requires = [
     'aiohttp~=3.5.4',
@@ -23,7 +23,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='pyacryl2',
-    version='0.1',
+    version='0.1.1',
     packages=packages,
     install_requires=install_requires,
     test_suite="tests",

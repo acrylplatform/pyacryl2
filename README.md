@@ -1,7 +1,11 @@
-# PyAcryl2 [![Build Status](https://travis-ci.com/DPInvaders/pyacryl2.svg?token=s1sqYjTtbQq5zQbpVpA2&branch=master)](https://travis-ci.com/DPInvaders/pyacryl2)
+# PyAcryl2 
+[![Build Status](https://travis-ci.com/DPInvaders/pyacryl2.svg?token=s1sqYjTtbQq5zQbpVpA2&branch=master)](https://travis-ci.com/DPInvaders/pyacryl2)
+[![Documentation Status](https://readthedocs.org/projects/pyacryl2/badge/?version=latest)](https://pyacryl2.readthedocs.io/en/latest/?badge=latest)
 
 [Acryl](https://acrylplatform.com/ "Acryl Platform") Node API client 
 
+**Full documentation**
+https://pyacryl2.readthedocs.io/en/latest/
 
 ## Installation
 
