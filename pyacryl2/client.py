@@ -932,13 +932,13 @@ class AcrylClient(BaseClient):
         """
         return self.request('get', '/matcher/orderbook', matcher=True)
 
-    def matcher_order_create(self):
+    def matcher_order_create(self, order_data):
         """
-        Get trading markets
+        Create order
 
         :return:
         """
-        return self.request('post', '/matcher/orderbook', matcher=True)
+        return self.request('post', '/matcher/orderbook', json_data=order_data, matcher=True)
 
     def matcher_settings(self):
         """
@@ -950,7 +950,7 @@ class AcrylClient(BaseClient):
 
     def matcher_orderbook_remove(self, amount_asset_id, price_asset_id):
         """
-        Remove orderbook
+        Remove orderbook for asset pair
 
         :param amount_asset_id:
         :param price_asset_id:
@@ -972,7 +972,7 @@ class AcrylClient(BaseClient):
 
     def matcher_orderbook_get_asset_pair_status(self, amount_asset_id, price_asset_id):
         """
-        Get orderbook for asset pair
+        Get orderbook status for asset pair
 
         :param amount_asset_id:
         :param price_asset_id:
@@ -984,11 +984,73 @@ class AcrylClient(BaseClient):
 
     def matcher_orderbook_history(self, public_key):
         """
-        Get trading markets
+        Get orderbook history for a public key
 
         :return:
         """
         return self.request('get', '/matcher/orderbook/{}'.format(public_key), matcher=True)
+
+    def matcher_orders_cancel_order(self, order_id, transaction_data):
+        """
+        Cancel order by id
+
+        :param order_id:
+        :return:
+        """
+        return self.request(
+            'post', '/matcher/orders/cancel/{}'.format(order_id), json_data=transaction_data, matcher=True
+        )
+
+    def matcher_orders_address(self, address):
+        """
+        Get address order history for an address
+
+        :param address:
+        :return:
+        """
+        return self.request('get', '/matcher/orders/{}'.format(address))
+
+    def matcher_orderbook_tradable_balance(self, amount_asset, price_asset, address):
+        """
+        Get tradable balance for asset pair
+
+        :param amount_asset:
+        :param price_asset:
+        :param address:
+        :return:
+        """
+        return self.request(
+            'get', '/matcher/orderbook/{}/{}/tradableBalance/{}'.format(amount_asset, price_asset, address)
+        )
+
+    def matcher_balance_reserved(self, public_key):
+        """
+        Get reserved balance of open orders
+
+        :param public_key:
+        :return:
+        """
+        return self.request('get', '/matcher/balance/reserved/{}'.format(public_key))
+
+    def matcher_order_status(self, amount_asset, price_asset, order_id):
+        """
+        Get order status for asset pair
+
+        :param amount_asset:
+        :param price_asset:
+        :param order_id:
+        :return:
+        """
+        return self.request('get', '/matcher/orderbook/{}/{}/{}'.format(amount_asset, price_asset, order_id))
+
+    def matcher_transactions_order(self, order_id):
+        """
+        Get exchange transactions created on DEX for the given order
+
+        :param order_id:
+        :return:
+        """
+        return self.request('get', '/matcher/transactions/{}'.format(order_id))
 
     # Node API request maker
 
