@@ -920,7 +920,9 @@ class AcrylClient(BaseClient):
     def matcher(self):
         """
         Get matcher public key
+
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request('get', '/matcher', matcher=True)
 
@@ -929,6 +931,7 @@ class AcrylClient(BaseClient):
         Get trading markets
 
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request('get', '/matcher/orderbook', matcher=True)
 
@@ -937,14 +940,16 @@ class AcrylClient(BaseClient):
         Create order
 
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request('post', '/matcher/orderbook', json_data=order_data, matcher=True)
 
     def matcher_settings(self):
         """
-        Get trading markets
+        Get matcher settings
 
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request('get', '/matcher/settings', matcher=True)
 
@@ -955,6 +960,7 @@ class AcrylClient(BaseClient):
         :param amount_asset_id:
         :param price_asset_id:
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request(
             'delete', '/matcher/orderbook/{}/{}'.format(amount_asset_id, price_asset_id), matcher=True
@@ -967,6 +973,7 @@ class AcrylClient(BaseClient):
         :param amount_asset_id:
         :param price_asset_id:
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request('get', '/matcher/orderbook/{}/{}'.format(amount_asset_id, price_asset_id), matcher=True)
 
@@ -977,6 +984,7 @@ class AcrylClient(BaseClient):
         :param amount_asset_id:
         :param price_asset_id:
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request(
             'get', '/matcher/orderbook/{}/{}/status'.format(amount_asset_id, price_asset_id), matcher=True
@@ -987,6 +995,7 @@ class AcrylClient(BaseClient):
         Get orderbook history for a public key
 
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request('get', '/matcher/orderbook/{}'.format(public_key), matcher=True)
 
@@ -996,6 +1005,7 @@ class AcrylClient(BaseClient):
 
         :param order_id:
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request(
             'post', '/matcher/orders/cancel/{}'.format(order_id), json_data=transaction_data, matcher=True
@@ -1007,6 +1017,7 @@ class AcrylClient(BaseClient):
 
         :param address:
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request('get', '/matcher/orders/{}'.format(address))
 
@@ -1018,6 +1029,7 @@ class AcrylClient(BaseClient):
         :param price_asset:
         :param address:
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request(
             'get', '/matcher/orderbook/{}/{}/tradableBalance/{}'.format(amount_asset, price_asset, address)
@@ -1029,6 +1041,7 @@ class AcrylClient(BaseClient):
 
         :param public_key:
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request('get', '/matcher/balance/reserved/{}'.format(public_key))
 
@@ -1040,6 +1053,7 @@ class AcrylClient(BaseClient):
         :param price_asset:
         :param order_id:
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request('get', '/matcher/orderbook/{}/{}/{}'.format(amount_asset, price_asset, order_id))
 
@@ -1049,6 +1063,7 @@ class AcrylClient(BaseClient):
 
         :param order_id:
         :return:
+        :rtype: AcrylClientResponse
         """
         return self.request('get', '/matcher/transactions/{}'.format(order_id))
 
@@ -1064,7 +1079,7 @@ class AcrylClient(BaseClient):
         :param data: body data
         :param json_data: body data in json
         :param headers: HTTP headers
-        :param
+        :param matcher: matcher request
         :return: handled result if online else request params dict
         :rtype: AcrylClientResponse or dict
         """

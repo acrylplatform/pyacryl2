@@ -799,6 +799,158 @@ class AcrylAsyncClient(BaseClient):
         """
         return await self.request('get', '/node/version')
 
+    # Matcher endpoints
+
+    async def matcher(self):
+        """
+        Get matcher public key
+
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return await self.request('get', '/matcher', matcher=True)
+
+    async def matcher_orderbook(self):
+        """
+        Get trading markets
+
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request('get', '/matcher/orderbook', matcher=True)
+
+    async def matcher_order_create(self, order_data):
+        """
+        Create order
+
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request('post', '/matcher/orderbook', json_data=order_data, matcher=True)
+
+    async def matcher_settings(self):
+        """
+        Get matcher settings
+
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request('get', '/matcher/settings', matcher=True)
+
+    async def matcher_orderbook_remove(self, amount_asset_id, price_asset_id):
+        """
+        Remove orderbook for asset pair
+
+        :param amount_asset_id:
+        :param price_asset_id:
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request(
+            'delete', '/matcher/orderbook/{}/{}'.format(amount_asset_id, price_asset_id), matcher=True
+        )
+
+    async def matcher_orderbook_get_asset_pair(self, amount_asset_id, price_asset_id):
+        """
+        Get orderbook for asset pair
+
+        :param amount_asset_id:
+        :param price_asset_id:
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request('get', '/matcher/orderbook/{}/{}'.format(amount_asset_id, price_asset_id), matcher=True)
+
+    async def matcher_orderbook_get_asset_pair_status(self, amount_asset_id, price_asset_id):
+        """
+        Get orderbook status for asset pair
+
+        :param amount_asset_id:
+        :param price_asset_id:
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request(
+            'get', '/matcher/orderbook/{}/{}/status'.format(amount_asset_id, price_asset_id), matcher=True
+        )
+
+    async def matcher_orderbook_history(self, public_key):
+        """
+        Get orderbook history for a public key
+
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request('get', '/matcher/orderbook/{}'.format(public_key), matcher=True)
+
+    async def matcher_orders_cancel_order(self, order_id, transaction_data):
+        """
+        Cancel order by id
+
+        :param order_id:
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request(
+            'post', '/matcher/orders/cancel/{}'.format(order_id), json_data=transaction_data, matcher=True
+        )
+
+    async def matcher_orders_address(self, address):
+        """
+        Get address order history for an address
+
+        :param address:
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request('get', '/matcher/orders/{}'.format(address))
+
+    async def matcher_orderbook_tradable_balance(self, amount_asset, price_asset, address):
+        """
+        Get tradable balance for asset pair
+
+        :param amount_asset:
+        :param price_asset:
+        :param address:
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request(
+            'get', '/matcher/orderbook/{}/{}/tradableBalance/{}'.format(amount_asset, price_asset, address)
+        )
+
+    async def matcher_balance_reserved(self, public_key):
+        """
+        Get reserved balance of open orders
+
+        :param public_key:
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request('get', '/matcher/balance/reserved/{}'.format(public_key))
+
+    async def matcher_order_status(self, amount_asset, price_asset, order_id):
+        """
+        Get order status for asset pair
+
+        :param amount_asset:
+        :param price_asset:
+        :param order_id:
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request('get', '/matcher/orderbook/{}/{}/{}'.format(amount_asset, price_asset, order_id))
+
+    async def matcher_transactions_order(self, order_id):
+        """
+        Get exchange transactions created on DEX for the given order
+
+        :param order_id:
+        :return:
+        :rtype: AcrylAsyncClientResponse
+        """
+        return self.request('get', '/matcher/transactions/{}'.format(order_id))
+
     async def start_session(self):
         """
         Create aiothttp client session
@@ -816,11 +968,11 @@ class AcrylAsyncClient(BaseClient):
         await self.session.close()
         self.session = None
 
-    async def request(self, method, endpoint, params=None, data=None, json_data=None, headers=None):
+    async def request(self, method, endpoint, params=None, data=None, json_data=None, headers=None, matcher=False):
         """
         Make a asynchronous request to API
-        If session was created outside (e.g. in context manager method) don't create new and don't close,
-        else create new session and close it after request
+        If session was created outside (e.g. in context manager method) don't create new and don't close on
+        request finish, else create new session and close it after request
 
         :param method: HTTP method
         :param endpoint: API endpoint
@@ -828,10 +980,11 @@ class AcrylAsyncClient(BaseClient):
         :param data: body data
         :param json_data: body data in json
         :param headers: HTTP headers
+        :param: matcher: matcher request
         :return: handled result if online else request params dict
         :rtype: AcrylAsyncClientResponse or dict
         """
-        request_params = self._setup_request_params(endpoint, params, data, json_data, headers)
+        request_params = self._setup_request_params(endpoint, params, data, json_data, headers, matcher)
         if not self.online:
             return request_params
 
