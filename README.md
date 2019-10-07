@@ -38,7 +38,7 @@ python setup.py install
 	- [X] Address data
 	- [X] Transactions data
 
-- [ ] Matcher API
+- [X] Matcher API
 
 - [X] Docs
 - [X] Tests

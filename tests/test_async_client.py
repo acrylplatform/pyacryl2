@@ -13,23 +13,35 @@ class AcrylAsyncClientTest(AioHTTPTestCase):
 
     def setUp(self):
         super().setUp()
-        self.api_client = AcrylAsyncClient(node_address="http://{}:{}".format(self.server.host, self.server.port))
+        address = "http://{}:{}".format(self.server.host, self.server.port)
+        self.api_client = AcrylAsyncClient(node_address=address, matcher_address=address)
 
     async def get_application(self):
 
         async def node_version(request):
             return web.json_response({"version": "v99999"})
 
+        async def matcher_public_key(request):
+            return web.json_response("public_key")
+
         app = web.Application()
         app.router.add_get('/node/version', node_version)
+        app.router.add_get('/matcher', matcher_public_key)
         return app
 
     @unittest_run_loop
-    async def test_request_response(self):
+    async def test_node_request_response(self):
         node_version_response = await self.api_client.node_version()
         self.assertIsInstance(node_version_response, AcrylClientResponse)
         self.assertTrue(node_version_response)
         self.assertEqual(node_version_response.response_data, {"version": "v99999"})
+
+    @unittest_run_loop
+    async def test_matcher_request_response(self):
+        node_version_response = await self.api_client.matcher()
+        self.assertIsInstance(node_version_response, AcrylClientResponse)
+        self.assertTrue(node_version_response)
+        self.assertEqual(node_version_response.response_data, "public_key")
 
     @patch('pyacryl2.async_client.AcrylAsyncClient')
     def test_mocked_request_response(self, mocked_client):

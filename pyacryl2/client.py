@@ -9,6 +9,7 @@ from urllib.parse import urljoin
 import requests
 
 DEFAULT_NODE_ADDRESS = 'https://nodes.acrylplatform.com'
+DEFAULT_MATCHER_ADDRESS = 'https://matcher.acrylplatform.com'
 DEFAULT_CHAIN_ID = "A"
 CHAIN_ID_NAMES = (('A', 'mainnet'), ('K', 'testnet'))
 DEFAULT_HEADERS = (('user-agent', 'pyacryl2-client'),)
@@ -63,6 +64,8 @@ class BaseClient:
 
     :param node_address: node url
     :type node_address: str
+    :param matcher_address: node url
+    :type matcher_address: str
     :param chain_id: chain id
     :type chain_id: str
     :param api_key: API key for private methods
@@ -75,9 +78,10 @@ class BaseClient:
     :type online: bool
     """
 
-    def __init__(self, node_address=DEFAULT_NODE_ADDRESS, chain_id=None, api_key=None, raise_exception=True,
-                 request_params=None, online=True):
+    def __init__(self, node_address=DEFAULT_NODE_ADDRESS, matcher_address=DEFAULT_MATCHER_ADDRESS, chain_id=None,
+                 api_key=None, raise_exception=True, request_params=None, online=True):
         self.node_address = node_address
+        self.matcher_address = matcher_address
         self.chain_id = chain_id
         self.api_key = api_key
         self.raise_exception = raise_exception
@@ -85,7 +89,7 @@ class BaseClient:
         self.online = online
         self.session = None
 
-    def _setup_request_params(self, endpoint, params=None, data=None, json_data=None, headers=None):
+    def _setup_request_params(self, endpoint, params=None, data=None, json_data=None, headers=None, matcher=False):
         """
         Create request params for requests session
         :param endpoint: API endpoint
@@ -93,10 +97,15 @@ class BaseClient:
         :param data: request data
         :param json_data: request json data
         :param headers: request headers
+        :param matcher: matcher request
         :return: dict of request params suitable for requests method function
         :rtype: dict
         """
-        request_url = urljoin(self.node_address, endpoint)
+        if matcher:
+            request_url = urljoin(self.matcher_address, endpoint)
+        else:
+            request_url = urljoin(self.node_address, endpoint)
+
         request_headers = dict(DEFAULT_HEADERS)
 
         if self.api_key:
@@ -906,9 +915,161 @@ class AcrylClient(BaseClient):
         """
         return self.request('get', '/node/version')
 
+    # Matcher endpoints
+
+    def matcher(self):
+        """
+        Get matcher public key
+
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher', matcher=True)
+
+    def matcher_orderbook(self):
+        """
+        Get trading markets
+
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/orderbook', matcher=True)
+
+    def matcher_order_create(self, order_data):
+        """
+        Create order
+
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('post', '/matcher/orderbook', json_data=order_data, matcher=True)
+
+    def matcher_settings(self):
+        """
+        Get matcher settings
+
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/settings', matcher=True)
+
+    def matcher_orderbook_remove(self, amount_asset_id, price_asset_id):
+        """
+        Remove orderbook for asset pair
+
+        :param amount_asset_id:
+        :param price_asset_id:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request(
+            'delete', '/matcher/orderbook/{}/{}'.format(amount_asset_id, price_asset_id), matcher=True
+        )
+
+    def matcher_orderbook_get_asset_pair(self, amount_asset_id, price_asset_id):
+        """
+        Get orderbook for asset pair
+
+        :param amount_asset_id:
+        :param price_asset_id:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/orderbook/{}/{}'.format(amount_asset_id, price_asset_id), matcher=True)
+
+    def matcher_orderbook_get_asset_pair_status(self, amount_asset_id, price_asset_id):
+        """
+        Get orderbook status for asset pair
+
+        :param amount_asset_id:
+        :param price_asset_id:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request(
+            'get', '/matcher/orderbook/{}/{}/status'.format(amount_asset_id, price_asset_id), matcher=True
+        )
+
+    def matcher_orderbook_history(self, public_key):
+        """
+        Get orderbook history for a public key
+
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/orderbook/{}'.format(public_key), matcher=True)
+
+    def matcher_orders_cancel_order(self, order_id, transaction_data):
+        """
+        Cancel order by id
+
+        :param order_id:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request(
+            'post', '/matcher/orders/cancel/{}'.format(order_id), json_data=transaction_data, matcher=True
+        )
+
+    def matcher_orders_address(self, address):
+        """
+        Get address order history for an address
+
+        :param address:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/orders/{}'.format(address))
+
+    def matcher_orderbook_tradable_balance(self, amount_asset, price_asset, address):
+        """
+        Get tradable balance for asset pair
+
+        :param amount_asset:
+        :param price_asset:
+        :param address:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request(
+            'get', '/matcher/orderbook/{}/{}/tradableBalance/{}'.format(amount_asset, price_asset, address)
+        )
+
+    def matcher_balance_reserved(self, public_key):
+        """
+        Get reserved balance of open orders
+
+        :param public_key:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/balance/reserved/{}'.format(public_key))
+
+    def matcher_order_status(self, amount_asset, price_asset, order_id):
+        """
+        Get order status for asset pair
+
+        :param amount_asset:
+        :param price_asset:
+        :param order_id:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/orderbook/{}/{}/{}'.format(amount_asset, price_asset, order_id))
+
+    def matcher_transactions_order(self, order_id):
+        """
+        Get exchange transactions created on DEX for the given order
+
+        :param order_id:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/transactions/{}'.format(order_id))
+
     # Node API request maker
 
-    def request(self, method, endpoint, params=None, data=None, json_data=None, headers=None):
+    def request(self, method, endpoint, params=None, data=None, json_data=None, headers=None, matcher=False):
         """
         Make a request to API
 
@@ -918,10 +1079,11 @@ class AcrylClient(BaseClient):
         :param data: body data
         :param json_data: body data in json
         :param headers: HTTP headers
+        :param matcher: matcher request
         :return: handled result if online else request params dict
         :rtype: AcrylClientResponse or dict
         """
-        request_params = self._setup_request_params(endpoint, params, data, json_data, headers)
+        request_params = self._setup_request_params(endpoint, params, data, json_data, headers, matcher)
         if not self.online:
             return request_params
 
@@ -999,3 +1161,4 @@ class AcrylClient(BaseClient):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close_session()
+
