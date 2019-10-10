@@ -4,7 +4,7 @@ pyacryl2
 Acryl clients (sync and async) module
 """
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 __author__ = 'DPInvaders'
 __license__ = 'MIT'
 
