@@ -757,7 +757,7 @@ class BaseAcrylAddress:
         :return: seed in base58
         :rtype: bytes
         """
-        return base58.b58encode(self.seed)
+        return base58.b58encode(self.seed.encode('latin-1'))
         
 
 class AcrylAddress(BaseAcrylAddress):

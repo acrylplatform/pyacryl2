@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import patch
 
+import base58
+
 from pyacryl2 import AcrylClient
 from pyacryl2.utils import AcrylAddress
 from pyacryl2.utils import AcrylAddressGenerator
@@ -39,4 +41,9 @@ class AddressMethodsTest(unittest.TestCase):
         self.assertIsInstance(balance_result, dict)
         transfer_result = address.transfer_acryl('3EMZGnpVGcCWjdQWAU2Hc8SFUVUDnxKnprX', 1000, attachment="test")
         self.assertIsInstance(transfer_result, dict)
+
+    def test_base58_seed_encode(self):
+        address_generator = AcrylAddressGenerator()
+        address = address_generator.generate()
+        self.assertEqual(address.base58_seed, base58.b58encode(address.seed.encode('latin-1')))
 
