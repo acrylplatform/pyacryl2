@@ -5,13 +5,13 @@ url = "https://github.com/DPInvaders/pyacryl2"
 packages = find_packages(exclude=["tests", "tests.*"])
 
 install_requires = [
-    'aiohttp~=3.5.4',
-    'base58~=0.2.5',
-    'mnemonic~=0.18',
-    'pysha3~=1.0.2',
-    'python-axolotl-curve25519~=0.4.1.post2',
-    'requests~=2.21.0',
-    'ujson~=1.35',
+    'aiohttp==3.5.4',
+    'base58==1.0.3',
+    'mnemonic==0.18',
+    'pysha3==1.0.2',
+    'python-axolotl-curve25519==0.4.1.post2',
+    'requests==2.21.0',
+    'ujson==1.35',
 ]
 
 keywords = 'acryl pyacryl api client async'

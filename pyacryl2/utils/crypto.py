@@ -24,7 +24,7 @@ def sign_with_private_key(private_key, data):
     random_bytes = os.urandom(64)
     signed_data = base58.b58encode(
         axolotl_curve25519.calculateSignature(random_bytes, base58.b58decode(private_key), data)
-    )
+    ).decode()
     return signed_data
 
 

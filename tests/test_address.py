@@ -45,5 +45,5 @@ class AddressMethodsTest(unittest.TestCase):
     def test_base58_seed_encode(self):
         address_generator = AcrylAddressGenerator()
         address = address_generator.generate()
-        self.assertEqual(address.base58_seed, base58.b58encode(address.seed.encode('latin-1')))
+        self.assertEqual(address.base58_seed, base58.b58encode(address.seed.encode('latin-1')).decode())
 

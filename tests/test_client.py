@@ -10,12 +10,13 @@ class AcrylClientTest(unittest.TestCase):
         client = mocked_client()
         data = {"version": "v99999"}
         client.node_version.return_value = AcrylClientResponse(
-            successful=True, response_data=data
+            successful=True, endpoint='/node/version', response_data=data
         )
         node_version = client.node_version()
         self.assertIsInstance(node_version, AcrylClientResponse)
         self.assertTrue(node_version)
         self.assertEqual(node_version.response_data, data)
+        self.assertEqual(node_version.endpoint, '/node/version')
 
     def test_offline_client(self):
         client = AcrylClient(online=False)

@@ -4,11 +4,16 @@ pyacryl2.async_client
 
 This module provides async API client class
 """
+import logging
+
 import ujson
 
 from aiohttp import ClientSession, ContentTypeError
 
 from pyacryl2.client import AcrylClientException, AcrylClientResponse, BaseClient
+
+
+acryl_client_logger = logging.getLogger('pyacryl2.AcrylClient')
 
 
 class AcrylAsyncClientResponse(AcrylClientResponse):
@@ -958,6 +963,7 @@ class AcrylAsyncClient(BaseClient):
         :rtype: None
         """
         self.session = ClientSession(**self._default_session_args)
+        acryl_client_logger.debug("Started session for {}".format(self))
 
     async def close_session(self):
         """
@@ -965,8 +971,10 @@ class AcrylAsyncClient(BaseClient):
         :return: nothing
         :rtype: None
         """
+        acryl_client_logger.debug("Closing session for {}".format(self))
         await self.session.close()
         self.session = None
+        acryl_client_logger.debug("Session closed for {}".format(self))
 
     async def request(self, method, endpoint, params=None, data=None, json_data=None, headers=None, matcher=False):
         """
@@ -986,6 +994,7 @@ class AcrylAsyncClient(BaseClient):
         """
         request_params = self._setup_request_params(endpoint, params, data, json_data, headers, matcher)
         if not self.online:
+            acryl_client_logger.debug("Offline request '{}' in {}".format(endpoint, self))
             return request_params
 
         close_session = False
@@ -995,8 +1004,10 @@ class AcrylAsyncClient(BaseClient):
 
         try:
             session_method = getattr(self.session, method)
+            acryl_client_logger.debug("Requesting '{}' in {}".format(endpoint, self))
             async with session_method(**request_params) as response:
-                result = await self._handle_response(response)
+                acryl_client_logger.debug("Finished request '{}' in {}".format(endpoint, self))
+                result = await self._handle_response(response, endpoint)
 
         finally:
             if self.session and close_session:
@@ -1005,10 +1016,11 @@ class AcrylAsyncClient(BaseClient):
 
         return result
 
-    async def _handle_response(self, response):
+    async def _handle_response(self, response, endpoint):
         """
         Handle aiohttp client response object
         :param response: requests response object
+        :param endpoint: API endpoint
         :return: async client response object
         :rtype: AcrylAsyncClientResponse
         :raises: AcrylAsyncClientException
@@ -1028,14 +1040,16 @@ class AcrylAsyncClient(BaseClient):
                     "HTTP error code {}, error text: {}".format(response.status, error_message)
                 )
 
-            return AcrylAsyncClientResponse(successful=False, error_code=error_code, error_message=error_message)
+            return AcrylAsyncClientResponse(
+                successful=False, endpoint=endpoint, error_code=error_code, error_message=error_message
+            )
 
         try:
             result = await response.json()
         except (ValueError, ContentTypeError):
             result = await response.text()
 
-        return AcrylAsyncClientResponse(successful=True, response_data=result)
+        return AcrylAsyncClientResponse(successful=True, endpoint=endpoint, response_data=result)
 
     async def __aenter__(self):
         await self.start_session()

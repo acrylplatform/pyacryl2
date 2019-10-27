@@ -147,8 +147,8 @@ class AcrylAddressGenerator:
         raw_address = chr(version) + chain_id + self._hash_bytes(public_key)[0:20]
         address_digest = self._hash_bytes(raw_address.encode('latin-1'))[0:4]
         address_data = dict()
-        address_data["value"] = base58.b58encode((raw_address + address_digest).encode('latin-1'))
-        address_data["public_key"] = base58.b58encode(public_key)
+        address_data["value"] = base58.b58encode((raw_address + address_digest).encode('latin-1')).decode()
+        address_data["public_key"] = base58.b58encode(public_key).decode()
         address_data["private_key"] = private_key
         address_data["chain_id"] = chain_id
         return address_data
@@ -166,7 +166,7 @@ class AcrylAddressGenerator:
         raw_address = chr(version) + chain_id + self._hash_bytes(decoded_public_key)[0:20]
         address_digest = self._hash_bytes(raw_address.encode('latin-1'))[0:4]
         address_data = dict()
-        address_data["value"] = base58.b58encode((raw_address + address_digest).encode('latin-1'))
+        address_data["value"] = base58.b58encode((raw_address + address_digest).encode('latin-1')).decode()
         address_data["public_key"] = public_key
         address_data["chain_id"] = chain_id
         return address_data
@@ -184,9 +184,9 @@ class AcrylAddressGenerator:
         raw_address = chr(version) + chain_id + cls._hash_bytes(public_key)[0:20]
         address_digest = cls._hash_bytes(raw_address.encode('latin-1'))[0:4]
         address_data = dict()
-        address_data["value"] = base58.b58encode((raw_address + address_digest).encode('latin-1'))
-        address_data["public_key"] = base58.b58encode(public_key)
-        address_data["private_key"] = base58.b58encode(private_key)
+        address_data["value"] = base58.b58encode((raw_address + address_digest).encode('latin-1')).decode()
+        address_data["public_key"] = base58.b58encode(public_key).decode()
+        address_data["private_key"] = base58.b58encode(private_key).decode()
         address_data["seed"] = seed
         address_data["chain_id"] = chain_id
         return address_data

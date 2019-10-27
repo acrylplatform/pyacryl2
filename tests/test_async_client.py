@@ -48,12 +48,15 @@ class AcrylAsyncClientTest(AioHTTPTestCase):
         client = mocked_client()
         data = {"version": "v99999"}
         request_future = self.loop.create_future()
-        request_future.set_result(AcrylAsyncClientResponse(successful=True, response_data=data))
+        request_future.set_result(
+            AcrylAsyncClientResponse(successful=True, endpoint='/node/version', response_data=data)
+        )
         client.node_version.return_value = request_future
         node_version_response = self.loop.run_until_complete(client.node_version())
         self.assertIsInstance(node_version_response, AcrylClientResponse)
         self.assertTrue(node_version_response)
         self.assertEqual(node_version_response.response_data, data)
+        self.assertEqual(node_version_response.endpoint, '/node/version')
 
     @unittest_run_loop
     async def test_offline_client(self):

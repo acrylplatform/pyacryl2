@@ -119,7 +119,7 @@ class BaseAcrylAddress:
         """
         file_data = {
             "address": self.value, "private_key": self.private_key, "public_key": self.public_key,
-            "seed": base58.b58encode(self.seed) if encode_seed else self.seed, "chain_id": self.chain_id
+            "seed": base58.b58encode(self.seed).decode() if encode_seed else self.seed, "chain_id": self.chain_id
         }
         with open(file_path, 'w') as json_file:
             json.dump(file_data, json_file)
@@ -276,7 +276,7 @@ class BaseAcrylAddress:
             "amount": amount,
             "fee": transaction_fee,
             "timestamp": timestamp_param,
-            "attachment": base58.b58encode(encoded_attachment),
+            "attachment": base58.b58encode(encoded_attachment).decode(),
             "signature": signature,
         }
         if asset_id:
@@ -629,7 +629,7 @@ class BaseAcrylAddress:
             "fee": mass_fee,
             "timestamp": timestamp_param,
             "transfers": transfer_data,
-            "attachment": base58.b58encode(encoded_attachment),
+            "attachment": base58.b58encode(encoded_attachment).decode(),
             "signature": signature,
             "proofs": [
                 signature
@@ -757,7 +757,7 @@ class BaseAcrylAddress:
         :return: seed in base58
         :rtype: bytes
         """
-        return base58.b58encode(self.seed.encode('latin-1'))
+        return base58.b58encode(self.seed.encode('latin-1')).decode()
         
 
 class AcrylAddress(BaseAcrylAddress):

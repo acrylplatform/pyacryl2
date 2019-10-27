@@ -4,15 +4,19 @@ pyacryl2.client
 
 This module provides API client class
 """
+import logging
 from urllib.parse import urljoin
 
 import requests
+
 
 DEFAULT_NODE_ADDRESS = 'https://nodes.acrylplatform.com'
 DEFAULT_MATCHER_ADDRESS = 'https://matcher.acrylplatform.com'
 DEFAULT_CHAIN_ID = "A"
 CHAIN_ID_NAMES = (('A', 'mainnet'), ('K', 'testnet'))
 DEFAULT_HEADERS = (('user-agent', 'pyacryl2-client'),)
+
+client_logger = logging.getLogger('pyacryl2.AcrylClient')
 
 
 class AcrylClientException(Exception):
@@ -30,8 +34,9 @@ class AcrylClientResponse:
     :param error_message: error message in response (key "message" if response has json else response body as text)
     """
 
-    def __init__(self, successful, response_data=None, error_code=None, error_message=None):
+    def __init__(self, successful, endpoint, response_data=None, error_code=None, error_message=None):
         self.successful = successful
+        self.endpoint = endpoint
         self.response_data = response_data
         self.error_code = error_code
         self.error_message = error_message
@@ -966,16 +971,23 @@ class AcrylClient(BaseClient):
             'delete', '/matcher/orderbook/{}/{}'.format(amount_asset_id, price_asset_id), matcher=True
         )
 
-    def matcher_orderbook_get_asset_pair(self, amount_asset_id, price_asset_id):
+    def matcher_v1_orderbook_get_asset_pair(self, amount_asset_id, price_asset_id, depth=None):
         """
-        Get orderbook for asset pair
+        Get orderbook for asset pair (API v1)
 
         :param amount_asset_id:
         :param price_asset_id:
+        :param depth:
         :return:
         :rtype: AcrylClientResponse
         """
-        return self.request('get', '/matcher/orderbook/{}/{}'.format(amount_asset_id, price_asset_id), matcher=True)
+        params = dict()
+        if depth:
+            params["after"] = depth
+
+        return self.request(
+            'get', '/api/v1/orderbook/{}/{}'.format(amount_asset_id, price_asset_id), params=params, matcher=True
+        )
 
     def matcher_orderbook_get_asset_pair_status(self, amount_asset_id, price_asset_id):
         """
@@ -1004,12 +1016,23 @@ class AcrylClient(BaseClient):
         Cancel order by id
 
         :param order_id:
+        :param transaction_data:
         :return:
         :rtype: AcrylClientResponse
         """
         return self.request(
             'post', '/matcher/orders/cancel/{}'.format(order_id), json_data=transaction_data, matcher=True
         )
+
+    def matcher_orders_cancel_order_without_signature(self, order_id):
+        """
+        Cancel order with API key
+
+        :param order_id:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('post', '/matcher/orders/cancel/{}'.format(order_id), matcher=True)
 
     def matcher_orders_address(self, address):
         """
@@ -1067,6 +1090,63 @@ class AcrylClient(BaseClient):
         """
         return self.request('get', '/matcher/transactions/{}'.format(order_id))
 
+    def matcher_settings_rates(self):
+        """
+        Get matcher rates in Acryl
+
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/settings/rates')
+
+    def matcher_debug_last_offset(self):
+        """
+        TODO:
+
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/debug/lastOffset')
+
+    def matcher_debug_current_offset(self):
+        """
+        TODO:
+
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/debug/currentOffset')
+
+    def matcher_debug_all_snapshot_offsets(self):
+        """
+        TODO:
+
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('get', '/matcher/debug/allSnapshotOffsets')
+
+    def matcher_set_asset_rate(self, asset_id, rate):
+        """
+        TODO:
+
+        :param asset_id:
+        :param rate:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('put', '/matcher/settings/rates/{}'.format(asset_id), data=rate)
+
+    def matcher_delete_asset_rate(self, asset_id):
+        """
+        TODO:
+
+        :param asset_id:
+        :return:
+        :rtype: AcrylClientResponse
+        """
+        return self.request('delete', '/matcher/settings/rates/{}'.format(asset_id))
+
     # Node API request maker
 
     def request(self, method, endpoint, params=None, data=None, json_data=None, headers=None, matcher=False):
@@ -1085,6 +1165,7 @@ class AcrylClient(BaseClient):
         """
         request_params = self._setup_request_params(endpoint, params, data, json_data, headers, matcher)
         if not self.online:
+            client_logger.debug("Offline request '{}'".format(endpoint))
             return request_params
 
         close_session = False
@@ -1094,16 +1175,18 @@ class AcrylClient(BaseClient):
 
         try:
             request_method = getattr(self.session, method)
+            client_logger.debug("Requesting '{}'".format(endpoint))
             response = request_method(**request_params)
         finally:
+            client_logger.debug("Finished request '{}'".format(endpoint))
             if self.session and close_session:
                 self.session.close()
                 self.session = None
 
-        result = self._handle_response(response)
+        result = self._handle_response(response, endpoint)
         return result
 
-    def _handle_response(self, response):
+    def _handle_response(self, response, endpoint):
         """
         Handle requests response object. If client attribute `raise_exception` is True, then client error will be raised
 
@@ -1127,14 +1210,16 @@ class AcrylClient(BaseClient):
                     "HTTP error code {}, error text: {}".format(response.status_code, error_message)
                 )
 
-            return AcrylClientResponse(successful=False, error_code=error_code, error_message=error_message)
+            return AcrylClientResponse(
+                successful=False, endpoint=endpoint, error_code=error_code, error_message=error_message
+            )
 
         try:
             result = response.json()
         except ValueError:
             result = response.text
 
-        return AcrylClientResponse(successful=True, response_data=result)
+        return AcrylClientResponse(successful=True, endpoint=endpoint, response_data=result)
 
     def start_session(self):
         """
@@ -1144,6 +1229,7 @@ class AcrylClient(BaseClient):
         :rtype: None
         """
         self.session = requests.Session()
+        client_logger.debug("Started session")
 
     def close_session(self):
         """
@@ -1152,8 +1238,10 @@ class AcrylClient(BaseClient):
         :return: nothing
         :rtype: None
         """
+        client_logger.debug("Closing session")
         self.session.close()
         self.session = None
+        client_logger.debug("Session closed")
 
     def __enter__(self):
         self.start_session()

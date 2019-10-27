@@ -21,5 +21,6 @@ wheels/
 *.log
 .DS_Store
 .tox
+.build
 
 
