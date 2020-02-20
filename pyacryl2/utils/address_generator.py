@@ -39,8 +39,8 @@ class AcrylAddressGenerator:
             - if there is no seed and private key is specified then generate address value and public key
             - if there is no seed and public key is specified then generate address value
             - if there is no seed and value is specified with any key then validate them and return address object
-            - if there is no seed and no any key but value is specified validation or generation is not performed,
-                address object would be returned with the same value and chain_id
+            - if there is no seed and no any key but value is specified validation or generation is not performed,\
+            address object would be returned with the same value and chain_id
 
         :param value: address string value in base58
         :param private_key: private key string value in base58

@@ -22,5 +22,8 @@ wheels/
 .DS_Store
 .tox
 .build
+.vscode/
+Pipfile
+Pipfile.lock
 
 
