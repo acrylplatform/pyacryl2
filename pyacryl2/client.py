@@ -255,6 +255,7 @@ class AcrylClient(BaseClient):
     def address_validate(self, address):
         """
         Validate address
+
         :param address:
         :return:
         :rtype: AcrylClientResponse
@@ -264,6 +265,7 @@ class AcrylClient(BaseClient):
     def address_balance(self, address):
         """
         Address acryl balance
+
         :param address:
         :return:
         :rtype: AcrylClientResponse
@@ -273,6 +275,7 @@ class AcrylClient(BaseClient):
     def address_effective_balance(self, address):
         """
         Address effective balance
+
         :param address:
         :return:
         :rtype: AcrylClientResponse
@@ -282,6 +285,7 @@ class AcrylClient(BaseClient):
     def address_public_key(self, public_key):
         """
         Get address by public key
+
         :param public_key:
         :return:
         :rtype: AcrylClientResponse
@@ -291,6 +295,7 @@ class AcrylClient(BaseClient):
     def address_data_address(self, address, matches=None):
         """
         Get full address data
+
         :param address:
         :return:
         :rtype: AcrylClientResponse
@@ -304,6 +309,7 @@ class AcrylClient(BaseClient):
     def addresses(self):
         """
         Get node addresses
+
         :return:
         :rtype: AcrylClientResponse
         """
@@ -507,6 +513,7 @@ class AcrylClient(BaseClient):
     def consensus_algo(self):
         """
         Get consensus algorithm
+
         :return:
         """
         return self.request('get', '/consensus/algo')
@@ -531,6 +538,7 @@ class AcrylClient(BaseClient):
     def utils_seed(self):
         """
         Generate random seed on node
+
         :return:
         """
         return self.request('get', '/utils/seed')
@@ -1101,6 +1109,7 @@ class AcrylClient(BaseClient):
 
     def matcher_debug_last_offset(self):
         """
+        Get the last offset in the queue
         TODO:
 
         :return:
@@ -1110,6 +1119,7 @@ class AcrylClient(BaseClient):
 
     def matcher_debug_current_offset(self):
         """
+        Get a current offset in the queue
         TODO:
 
         :return:
@@ -1119,6 +1129,7 @@ class AcrylClient(BaseClient):
 
     def matcher_debug_all_snapshot_offsets(self):
         """
+        Get all snapshots' offsets in the queue
         TODO:
 
         :return:
@@ -1128,6 +1139,7 @@ class AcrylClient(BaseClient):
 
     def matcher_set_asset_rate(self, asset_id, rate):
         """
+        Asset rates
         TODO:
 
         :param asset_id:
@@ -1139,6 +1151,7 @@ class AcrylClient(BaseClient):
 
     def matcher_delete_asset_rate(self, asset_id):
         """
+        Delete rate for the specified asset
         TODO:
 
         :param asset_id:

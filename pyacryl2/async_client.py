@@ -139,6 +139,7 @@ class AcrylAsyncClient(BaseClient):
     async def address_validate(self, address):
         """
         Validate address
+        
         :param address:
         :return:
         :rtype: AcrylAsyncClientResponse
@@ -148,6 +149,7 @@ class AcrylAsyncClient(BaseClient):
     async def address_balance(self, address):
         """
         Address acryl balance
+
         :param address:
         :return:
         :rtype: AcrylAsyncClientResponse
@@ -157,6 +159,7 @@ class AcrylAsyncClient(BaseClient):
     async def address_effective_balance(self, address):
         """
         Address effective balance
+
         :param address:
         :return:
         :rtype: AcrylAsyncClientResponse
@@ -166,6 +169,7 @@ class AcrylAsyncClient(BaseClient):
     async def address_public_key(self, public_key):
         """
         Get address by public key
+
         :param public_key:
         :return:
         :rtype: AcrylAsyncClientResponse
@@ -175,6 +179,7 @@ class AcrylAsyncClient(BaseClient):
     async def address_data_address(self, address, matches=None):
         """
         Get full address data
+
         :param address:
         :return:
         :rtype: AcrylAsyncClientResponse
@@ -188,6 +193,7 @@ class AcrylAsyncClient(BaseClient):
     async def addresses(self):
         """
         Get node addresses
+
         :return:
         :rtype: AcrylAsyncClientResponse
         """
@@ -391,6 +397,7 @@ class AcrylAsyncClient(BaseClient):
     async def consensus_algo(self):
         """
         Get consensus algorithm
+
         :return:
         """
         return await self.request('get', '/consensus/algo')
@@ -959,6 +966,7 @@ class AcrylAsyncClient(BaseClient):
     async def start_session(self):
         """
         Create aiothttp client session
+
         :return: nothing
         :rtype: None
         """
@@ -968,6 +976,7 @@ class AcrylAsyncClient(BaseClient):
     async def close_session(self):
         """
         Close aiothttp client session
+
         :return: nothing
         :rtype: None
         """
@@ -1019,6 +1028,7 @@ class AcrylAsyncClient(BaseClient):
     async def _handle_response(self, response, endpoint):
         """
         Handle aiohttp client response object
+
         :param response: requests response object
         :param endpoint: API endpoint
         :return: async client response object
