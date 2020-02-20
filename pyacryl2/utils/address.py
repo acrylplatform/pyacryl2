@@ -31,6 +31,7 @@ DEFAULT_CANCEL_LEASE_TRANSACTION_FEE = 100000
 DEFAULT_SPONSORSHIP_TRANSACTION_FEE = 100000000
 DEFAULT_SET_SCRIPT_TRANSACTION_FEE = 1000000
 DEFAULT_SET_ASSET_SCRIPT_TRANSACTION_FEE = 100000000
+DEFAULT_DATA_TRANSACTION_FEE = 1000000
 
 TRANSACTION_TYPE_GENESIS = 1
 TRANSACTION_TYPE_PAYMENT = 2
@@ -480,7 +481,7 @@ class BaseAcrylAddress:
 
             data_buffer.extend(item_value)
 
-        transaction_fee = int(math.floor(1 + (len(json.dumps(data)) + 8 - 1) / 1024) * 1000000)
+        transaction_fee = int(math.floor(1 + (len(json.dumps(data)) + 8 - 1) / 1024) * DEFAULT_DATA_TRANSACTION_FEE)
         sign_data = [
             TRANSACTION_TYPE_DATA.to_bytes(1, 'big'),
             version.to_bytes(1, 'big'),
