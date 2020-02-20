@@ -31,7 +31,7 @@ DEFAULT_CANCEL_LEASE_TRANSACTION_FEE = 100000
 DEFAULT_SPONSORSHIP_TRANSACTION_FEE = 100000000
 DEFAULT_SET_SCRIPT_TRANSACTION_FEE = 1000000
 DEFAULT_SET_ASSET_SCRIPT_TRANSACTION_FEE = 100000000
-DEFAULT_DATA_TRANSACTION_FEE = 1000000
+DEFAULT_DATA_TRANSACTION_FEE_MULTIPLICATOR = 1000000
 
 TRANSACTION_TYPE_GENESIS = 1
 TRANSACTION_TYPE_PAYMENT = 2
@@ -437,7 +437,7 @@ class BaseAcrylAddress:
         }
         return transaction_data
 
-    def _generate_data_transaction(self, data, version=1, timestamp=0):
+    def _generate_data_transaction(self, data, fee=0, version=1, timestamp=0):
         """
         Prepare data for data transaction
 
@@ -481,7 +481,11 @@ class BaseAcrylAddress:
 
             data_buffer.extend(item_value)
 
-        transaction_fee = int(math.floor(1 + (len(json.dumps(data)) + 8 - 1) / 1024) * DEFAULT_DATA_TRANSACTION_FEE)
+        if not fee:
+            transaction_fee = int(math.floor(1 + (len(json.dumps(data)) + 8 - 1) / 1024) *
+                                  DEFAULT_DATA_TRANSACTION_FEE_MULTIPLICATOR)
+        else:
+            transaction_fee = fee
         sign_data = [
             TRANSACTION_TYPE_DATA.to_bytes(1, 'big'),
             version.to_bytes(1, 'big'),
@@ -915,7 +919,7 @@ class AcrylAddress(BaseAcrylAddress):
         return address_info
 
     @sign_required
-    def data_transaction(self, data, version=DEFAULT_TRANSACTION_VERSION, timestamp=0):
+    def data_transaction(self, data, fee=0, version=DEFAULT_TRANSACTION_VERSION, timestamp=0):
         """
         Create data transaction
 
@@ -928,13 +932,15 @@ class AcrylAddress(BaseAcrylAddress):
 
         :type data: list
         :param version: data transaction version
+        :type fee: int
+        :param fee: transaction fee. 1000000 is minimum. 
         :type version: int
         :param timestamp: transaction timestamp
         :type timestamp: int
         :return: client request result
         :rtype: AcrylClientResponse or dict
         """
-        transaction_data = self._generate_data_transaction(data, version, timestamp)
+        transaction_data = self._generate_data_transaction(data, fee, version, timestamp)
         result = self._api_client.transaction_broadcast(transaction_data)
         return result
 
