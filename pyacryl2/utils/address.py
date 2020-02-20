@@ -480,7 +480,7 @@ class BaseAcrylAddress:
 
             data_buffer.extend(item_value)
 
-        transaction_fee = int(math.floor(1 + (len(json.dumps(data)) + 8 - 1) / 1024) * 100000)
+        transaction_fee = int(math.floor(1 + (len(json.dumps(data)) + 8 - 1) / 1024) * 1000000)
         sign_data = [
             TRANSACTION_TYPE_DATA.to_bytes(1, 'big'),
             version.to_bytes(1, 'big'),
