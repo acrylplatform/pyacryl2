@@ -3,7 +3,7 @@
 #done <requirements.txt
 #fpm --python-bin python3 --python-pip pip3 --python-package-name-prefix "python36" --python-obey-requirements-txt -s python -t deb ./setup.py && mv *.deb /result/
 NAME=pyacryl2
-VERSION=0.1.4
+VERSION=0.1.5
 
 python3 setup.py bdist_wheel
 WHEEL=$(ls dist/"${NAME}-${VERSION}"*.whl)
