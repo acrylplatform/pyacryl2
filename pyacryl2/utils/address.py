@@ -474,7 +474,7 @@ class BaseAcrylAddress:
                 item_value = [
                     DATA_TRANSACTION_BINARY_TYPE.to_bytes(1, 'big'),
                     struct.pack(">H", len(item['value'])),
-                    item['value']
+                    item['value'].encode('latin-1')
                 ]
             else:
                 raise ValueError("Unknown data type: '{}'".format(item['type']))
