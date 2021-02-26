@@ -5,7 +5,7 @@ url = "https://github.com/DPInvaders/pyacryl2"
 packages = find_packages(exclude=["tests", "tests.*"])
 
 install_requires = [
-    'aiohttp==3.5.4',
+    'aiohttp==3.7.4',
     'base58==1.0.3',
     'mnemonic==0.18',
     'pysha3==1.0.2',
