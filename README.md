@@ -1,3 +1,5 @@
+Moved to [WavesPy](https://github.com/DPInvaders/wavespy "WavesPy")
+
 # PyAcryl2 
 [![Build Status](https://travis-ci.com/acrylplatform/pyacryl2.svg?branch=master)](https://travis-ci.com/acrylplatform/pyacryl2.svg?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/pyacryl2/badge/?version=latest)](https://pyacryl2.readthedocs.io/en/latest/?badge=latest)
