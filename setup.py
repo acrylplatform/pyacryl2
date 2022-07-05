@@ -11,7 +11,7 @@ install_requires = [
     'pysha3==1.0.2',
     'python-axolotl-curve25519==0.4.1.post2',
     'requests==2.21.0',
-    'ujson==1.35',
+    'ujson==5.4.0',
 ]
 
 keywords = 'acryl pyacryl api client async'
